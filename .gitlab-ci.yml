@@ -1,0 +1,41 @@
+stages:
+ - deploy-dev
+ - deploy-staging
+ - build-production
+
+deploy-dev:
+    stage: deploy-dev
+    only:
+        - dev-dan
+    script:
+        - ssh avnos@avs.be.avnos.io "cd /var/www/html/avnos-verification-server/ && git fetch && git stash && git checkout master && git pull origin master"
+        - ssh avnos@avs.be.avnos.io "cd /var/www/html/avnos-verification-server/ && sudo chmod -R 775 /var/www/html/avnos-verification-server/"
+        - ssh avnos@avs.be.avnos.io "cd /var/www/html/avnos-verification-server/ && sudo chmod -R 777 /var/www/html/avnos-verification-server/bootstrap"
+        - ssh avnos@avs.be.avnos.io "cd /var/www/html/avnos-verification-server/ && sudo chmod -R 777 /var/www/html/avnos-verification-server/storage"
+        - ssh avnos@avs.be.avnos.io "cd /var/www/html/avnos-verification-server/ && composer install"
+        - ssh avnos@avs.be.avnos.io "cd /var/www/html/avnos-verification-server/ && php artisan migrate"
+deploy-staging:
+    stage: deploy-staging
+    only:
+        - master
+    script:
+        - ssh avnos@stagingv2.avs.avnos.io "cd /var/www/html/avnos-verification-server/ && git fetch && git stash && git checkout master && git pull origin master"
+        - ssh avnos@stagingv2.avs.avnos.io "cd /var/www/html/avnos-verification-server/ && sudo chmod -R 775 /var/www/html/avnos-verification-server/"
+        - ssh avnos@stagingv2.avs.avnos.io "cd /var/www/html/avnos-verification-server/ && sudo chmod -R 777 /var/www/html/avnos-verification-server/bootstrap"
+        - ssh avnos@stagingv2.avs.avnos.io "cd /var/www/html/avnos-verification-server/ && sudo chmod -R 777 /var/www/html/avnos-verification-server/storage"
+        - ssh avnos@stagingv2.avs.avnos.io "cd /var/www/html/avnos-verification-server/ && composer install"
+        - ssh avnos@stagingv2.avs.avnos.io "cd /var/www/html/avnos-verification-server/ && php artisan migrate"
+
+build-production:
+    stage: build-production
+    only:
+        - master
+    script:
+        - ssh gitlab-runner@220.100.161.199 "cd ~/build-docker/avnos-cve-server/ && git fetch && git stash && git checkout master && git pull origin master"
+        - ssh gitlab-runner@220.100.161.199 "cd ~/build-docker/avnos-cve-server/ && docker-compose up -d"
+        - ssh gitlab-runner@220.100.161.199 "docker tag avnos-cve dockerv2.avnos.io/avnos-v2/avnos-cve-production"
+        - ssh gitlab-runner@220.100.161.199 "docker tag php-build-cve dockerv2.avnos.io/avnos-v2/php-build-cve"
+        - ssh gitlab-runner@220.100.161.199 "docker push dockerv2.avnos.io/avnos-v2/avnos-cve-production"
+        - ssh gitlab-runner@220.100.161.199 "docker push dockerv2.avnos.io/avnos-v2/php-build-cve"
+        - ssh gitlab-runner@220.100.161.199 "cd ~/build-docker/avnos-cve-server/ && docker-compose down"
+        - ssh gitlab-runner@220.100.161.199 "docker rmi avnos-cve dockerv2.avnos.io/avnos-v2/avnos-cve-production php-build-cve dockerv2.avnos.io/avnos-v2/php-build-cve"

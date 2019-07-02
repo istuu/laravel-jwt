@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  php-build-avs:
+    build:
+      context: ./
+      dockerfile: Dockerfile.php
+    image: php-build-avs:latest
+    container_name: build-php-avs
+    network_mode: host
+  gateway:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: avnos-avs:latest
+    container_name: app-avnos-avs
+    network_mode: host
