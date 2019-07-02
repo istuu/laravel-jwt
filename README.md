@@ -1,8 +1,7 @@
 # Laravel JWT
+![alt tag](https://img.shields.io/badge/Developer-Danang_Nugroho-red.svg)
+
 Example CRUD Rest API Using Auth JWT
-
-
- ![alt tag](https://img.shields.io/badge/Developer-Danang Nugroho-red.svg)
  
 
 ### How to Install
@@ -10,24 +9,20 @@ Example CRUD Rest API Using Auth JWT
 
 Documentation: 
 
-```sh
-    https://arim-tech.atlassian.net/wiki/spaces/ASV2/pages/727711749/1.+Introduction
-
-```
 
 A. Clone the project
 
 ```sh
-	git clone https://gitlab.avnos.io/backend/avnos-verification-server.git
+	git clone https://github.com/istuu/laravel-jwt
 
 ```
 
 B. Setting Database Connection in .env file
 
 ```sh
-	DB_CONNECTION=pgsql
+    DB_CONNECTION=mysql
     DB_HOST=127.0.0.1
-    DB_PORT=5432
+    DB_PORT=3306
     DB_DATABASE=[DB_NAME]
     DB_USERNAME=[DB_USERNAME]
     DB_PASSWORD=[DB_PASSWORD]
@@ -36,7 +31,7 @@ B. Setting Database Connection in .env file
 
 C. Run Composer Install / Update
 ```sh
-	composer install
+    composer install
 
 ```
 D. Migrate table
@@ -55,7 +50,7 @@ E. Run DB Seeder
 
 F. Run Following Command
 ```sh
-	php artisan jwt:secret
+    php artisan jwt:secret
 	
 ```
 
